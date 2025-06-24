@@ -84,7 +84,6 @@ export default async function decorate(block) {
       enableUpdateItemQuantity: enableUpdateItemQuantity === 'true',
       enableRemoveItem: enableRemoveItem === 'true',
     })($list),
-
     // Order Summary
     provider.render(OrderSummary, {
       routeProduct: (product) =>
