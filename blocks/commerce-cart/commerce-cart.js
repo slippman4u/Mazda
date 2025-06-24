@@ -74,43 +74,21 @@ export default async function decorate(block) {
     // Cart List
     provider.render(CartSummaryList, {
       hideHeading: hideHeading === 'true',
-      routeProduct: (product) => `/products/${product.url.urlKey}/${product.topLevelSku}`,
+      routeProduct: (product) =>
+        `/products/${product.url.urlKey}/${product.topLevelSku}`,
       routeEmptyCartCTA: startShoppingURL ? () => startShoppingURL : undefined,
-      slots: {
-        ProductAttributes: (ctx) => {
-          // Prepend Product Attributes
-          const ProductAttributes = ctx.item?.productAttributes;
-     
-          ProductAttributes?.forEach((attr) => {
-            if(attr.code === "shipping_notes") {
-              if(attr.selected_options) {
-                const selectedOptions = attr.selected_options
-                .filter((option) => option.label.trim() !== '')
-                .map((option) => option.label)
-                .join(', ');
-     
-                if(selectedOptions) {
-                  const productAttribute = document.createElement('div');
-                  productAttribute.innerText = `${attr.code}: ${selectedOptions}`;
-                  ctx.appendChild(productAttribute);
-                }
-              } else if (attr.value) {
-                const productAttribute = document.createElement('div');
-                productAttribute.innerText = `${attr.code}: ${attr.value}`;
-                ctx.appendChild(productAttribute);
-              }
-            }
-          })
-        },
       maxItems: parseInt(maxItems, 10) || undefined,
-      attributesToHide: hideAttributes.split(',').map((attr) => attr.trim().toLowerCase()),
+      attributesToHide: hideAttributes
+        .split(',')
+        .map((attr) => attr.trim().toLowerCase()),
       enableUpdateItemQuantity: enableUpdateItemQuantity === 'true',
       enableRemoveItem: enableRemoveItem === 'true',
     })($list),
 
     // Order Summary
     provider.render(OrderSummary, {
-      routeProduct: (product) => `/products/${product.url.urlKey}/${product.topLevelSku}`,
+      routeProduct: (product) =>
+        `/products/${product.url.urlKey}/${product.topLevelSku}`,
       routeCheckout: checkoutURL ? () => checkoutURL : undefined,
       slots: {
         EstimateShipping: async (ctx) => {
@@ -138,14 +116,18 @@ export default async function decorate(block) {
 
   let cartViewEventPublished = false;
   // Events
-  events.on('cart/data', (payload) => {
-    toggleEmptyCart(isCartEmpty(payload));
+  events.on(
+    'cart/data',
+    (payload) => {
+      toggleEmptyCart(isCartEmpty(payload));
 
-    if (!cartViewEventPublished) {
-      cartViewEventPublished = true;
-      publishShoppingCartViewEvent();
-    }
-  }, { eager: true });
+      if (!cartViewEventPublished) {
+        cartViewEventPublished = true;
+        publishShoppingCartViewEvent();
+      }
+    },
+    { eager: true }
+  );
 
   return Promise.resolve();
 }
