@@ -76,6 +76,32 @@ export default async function decorate(block) {
       hideHeading: hideHeading === 'true',
       routeProduct: (product) => `/products/${product.url.urlKey}/${product.topLevelSku}`,
       routeEmptyCartCTA: startShoppingURL ? () => startShoppingURL : undefined,
+      slots: {
+        ProductAttributes: (ctx) => {
+          // Prepend Product Attributes
+          const ProductAttributes = ctx.item?.productAttributes;
+     
+          ProductAttributes?.forEach((attr) => {
+            if(attr.code === "shipping_notes") {
+              if(attr.selected_options) {
+                const selectedOptions = attr.selected_options
+                .filter((option) => option.label.trim() !== '')
+                .map((option) => option.label)
+                .join(', ');
+     
+                if(selectedOptions) {
+                  const productAttribute = document.createElement('div');
+                  productAttribute.innerText = `${attr.code}: ${selectedOptions}`;
+                  ctx.appendChild(productAttribute);
+                }
+              } else if (attr.value) {
+                const productAttribute = document.createElement('div');
+                productAttribute.innerText = `${attr.code}: ${attr.value}`;
+                ctx.appendChild(productAttribute);
+              }
+            }
+          })
+        },
       maxItems: parseInt(maxItems, 10) || undefined,
       attributesToHide: hideAttributes.split(',').map((attr) => attr.trim().toLowerCase()),
       enableUpdateItemQuantity: enableUpdateItemQuantity === 'true',
