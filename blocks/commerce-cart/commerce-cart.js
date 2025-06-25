@@ -95,7 +95,7 @@ export default async function decorate(block) {
           const ProductAttributes = ctx.item?.productAttributes;
 
           ProductAttributes?.forEach((attr) => {
-            if (attr.code === 'Shipping Notes') {
+            if (attr.code === 'shipping_notes') {
               if (attr.selected_options) {
                 const selectedOptions = attr.selected_options
                   .filter((option) => option.label.trim() !== '')
